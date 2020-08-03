@@ -9,6 +9,7 @@ import {
   Image,
   Alert
 } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default class Home extends Component {
 
@@ -79,14 +80,14 @@ export default class Home extends Component {
               marginTop: 5,
               padding:5 }}>
           <Text style={{ fontSize: 30, fontWeight:'bold'}}>Saving Goal</Text>
-          <View style={{height:'50%',
+          <TouchableOpacity style={{height:'60%',
           width:'90%',
            justifyContent:'center',
              alignItems: 'center',
               backgroundColor:'gray',
                marginLeft:15, marginTop: 15  }}>
           <Text style={{ fontSize: 15, fontWeight:'bold'}}>Create a goal</Text>
-          </View>
+          </TouchableOpacity>
           </View>
       </View>
     );

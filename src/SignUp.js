@@ -9,18 +9,25 @@ import {
   Image,
   Alert
 } from 'react-native';
-
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("db.db");
+import AsyncStorage from '@react-native-community/async-storage';
 export default class SignUp extends Component {
-
   constructor(props) {
     super(props);
-    state = {
-      email   : '',
+    this.state = {
+      email: '',
       name: '',
-      city:'',
-      number:'',
-      address:'',
+      number: '',
+      address: '',
+      password: '',
+      c_password: '',
     }
+    db.transaction(tx => {
+      tx.executeSql(
+        'CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, name TEXT, number INT,address TEXT,password TEXT , c_password TEXT)'
+      )
+    })
   }
 
   onClickListener = (viewId) => {
@@ -32,20 +39,37 @@ export default class SignUp extends Component {
   }
 
   SignUpClick =() =>{
-    this.props.navigation.navigate('Home');
+    
+  }
+
+  CreateUser = () => {
+
+    if(this.state.email && this.state.name  && this.state.city &&  this.state.number  && this.state.address && 
+      (this.state.password === this.state.c_password) ){
+      db.transaction(
+        tx => {
+          tx.executeSql("insert into data (email, name, number, address, password,c_password) values (?, ?, ? ,?, ?, ?)", [this.state.email, this.state.name,  this.state.number,this.state.address, this.state.password, this.state.c_password]);
+          tx.executeSql("select * from data", [], async (_, { rows }) => {
+              const jsonValue = JSON.stringify(rows.item(rows.length - 1));
+              await AsyncStorage.setItem('@storage_Key', jsonValue);
+              console.log("Database..............?",jsonValue);
+            }
+          );
+        },
+        null
+      );
+      this.props.navigation.navigate('Home');
+    } else {
+      Alert.alert("Error", "Please Enter all fields")
+    }
   }
 
   render() {
     return (
       <View style={styles.container}>
         <Image style={styles.inputIcon} source={require('../assets/logo.jpg')}/>
-        <View style={styles.inputContainer}>
-          <TextInput style={styles.inputs}
-              placeholder="Name"
-              keyboardType="email-address"
-              underlineColorAndroid='transparent'
-              onChangeText={(name) => this.setState({name})}/>
-        </View>
+
+
         <View style={styles.inputContainer}>
           <TextInput style={styles.inputs}
               placeholder="Email"
@@ -53,6 +77,31 @@ export default class SignUp extends Component {
               underlineColorAndroid='transparent'
               onChangeText={(email) => this.setState({email})}/>
         </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput style={styles.inputs}
+              placeholder="Password"
+              secureTextEntry={true}
+              underlineColorAndroid='transparent'
+              onChangeText={(password) => this.setState({password})}/>
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput style={styles.inputs}
+              placeholder="Confirm Password"
+              secureTextEntry={true}
+              underlineColorAndroid='transparent'
+              onChangeText={(c_password) => this.setState({c_password})}/>
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput style={styles.inputs}
+              placeholder="Name"
+              keyboardType="email-address"
+              underlineColorAndroid='transparent'
+              onChangeText={(name) => this.setState({name})}/>
+        </View>
+
+
         <View style={styles.inputContainer}>
           <TextInput style={styles.inputs}
               placeholder="City"
@@ -74,7 +123,7 @@ export default class SignUp extends Component {
               underlineColorAndroid='transparent'
               onChangeText={(address) => this.setState({address})}/>
         </View>
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.SignUpClick}>
+        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.CreateUser}>
           <Text style={styles.loginText}>Sign Up</Text>
         </TouchableHighlight>
         <TouchableHighlight style={styles.buttonContainer} onPress={this.onSignUpClick}>

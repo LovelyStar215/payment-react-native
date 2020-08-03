@@ -9,12 +9,15 @@ import {
   Image,
   Alert
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("db.db");
 
 export default class SignIn extends Component {
 
   constructor(props) {
     super(props);
-    state = {
+    this.state = {
       email   : '',
       password: '',
     }
@@ -26,9 +29,25 @@ export default class SignIn extends Component {
   onSignUpClick = () =>{
     this.props.navigation.navigate('SignUp');
   }
-  onSignInClick = () =>{
-    this.props.navigation.navigate('Home');
-  }
+
+
+  onSignInClick = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'select * from data where email = ?',
+        [this.state.email],
+        async (tx, { rows: { _array } }) => {
+          if (this.state.password === _array[0]?.password  ) {
+            await AsyncStorage.setItem('@storage_Key', JSON.stringify(_array));
+            this.props.navigation.navigate('Home');
+          } else {
+            Alert.alert('Error','Please Provide correct email or passowrd');
+          }
+        }
+      );
+    });
+  };
+
 
   render() {
     return (

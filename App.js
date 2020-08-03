@@ -1,5 +1,6 @@
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { NavigationContainer, DrawerActions } from '@react-navigation/native';
@@ -32,6 +33,15 @@ const Stack = createNativeStackNavigator();
 }
 
 export default function App() {
+
+  clearAll = async (navigation) => {
+    try {
+      await AsyncStorage.clear();
+      navigation.navigate('SignIn')
+    } catch(e) {
+    }
+  }
+
   return (
     <NavigationContainer>
     <Stack.Navigator>
@@ -43,8 +53,8 @@ export default function App() {
         }} 
       />
       <Stack.Screen name="SignIn" component={SignIn}
-        options={({ navigation }) => ({
-          headerLeft: () =>  <></>,
+        options={() => ({
+          headerLeft: () => null,
         })}
       />
       <Stack.Screen name="SignUp" component={SignUp} />
@@ -55,7 +65,7 @@ export default function App() {
             onPress={()=>navigation.dispatch(DrawerActions.toggleDrawer())}/>
           },
           headerRight: () => { 
-            return  <TouchableOpacity  onPress={()=>navigation.navigate('SignIn')}>
+            return  <TouchableOpacity  onPress={() => clearAll(navigation)}>
               <Text>Logout</Text>
               </TouchableOpacity>
           },
