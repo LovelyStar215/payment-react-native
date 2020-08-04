@@ -1,12 +1,30 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableHighlight, Alert } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
-export const Deposit = ({navigation}) => {
+export const Deposit = () => {
 
-  const [state, setState] = useState('')
+  const [state, setValue] = useState(0)
 
-  const onSubmit= ()=>{
+  depositAmount = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@storage_Key');
+      let data =JSON.parse(jsonValue);
 
+      if(state < 5000) {
+        let val =  Number(data.balance) + Number(state);
+        data.balance = val;
+        await AsyncStorage.setItem('@storage_Key', JSON.stringify(data));
+        Alert.alert("Sucess");
+        this.props.navigation.navigate('Home',{balance: val})
+
+      } else {
+        Alert.alert("Error","Please enter amount between 0 to  5000");
+      }
+      
+    } catch(e) {
+      // error reading value
+    }
   }
 
   return (
@@ -15,11 +33,10 @@ export const Deposit = ({navigation}) => {
       <View style={styles.inputView}>
         <Text style={{ fontSize: 16, fontWeight:'bold'}}>Please add amount</Text>
         <TextInput style={styles.inputs}
-            value={state}
             placeholder="999$"
             underlineColorAndroid='transparent'
-            onChangeText={(loans) => setState({loans})}/>
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={onSubmit}>
+            onChangeText={(amount) => setValue(amount)}/>
+        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={depositAmount}>
           <Text style={styles.loginText}>Submit</Text>
         </TouchableHighlight>
       </View>

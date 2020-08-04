@@ -22,10 +22,11 @@ export default class SignUp extends Component {
       address: '',
       password: '',
       c_password: '',
+      balance: '',
     }
     db.transaction(tx => {
       tx.executeSql(
-        'CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, name TEXT, number INT,address TEXT,password TEXT , c_password TEXT)'
+        'CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, name TEXT, number INT,address TEXT,password TEXT , c_password TEXT, balance number)'
       )
     })
   }
@@ -43,22 +44,24 @@ export default class SignUp extends Component {
   }
 
   CreateUser = () => {
-
-    if(this.state.email && this.state.name  && this.state.city &&  this.state.number  && this.state.address && 
+    let balance= Math.floor(Math.random() * 10000);
+    if(this.state.email && this.state.name  &&   this.state.number  && this.state.address && 
       (this.state.password === this.state.c_password) ){
       db.transaction(
         tx => {
-          tx.executeSql("insert into data (email, name, number, address, password,c_password) values (?, ?, ? ,?, ?, ?)", [this.state.email, this.state.name,  this.state.number,this.state.address, this.state.password, this.state.c_password]);
-          tx.executeSql("select * from data", [], async (_, { rows }) => {
+          tx.executeSql("insert into user (email, name, number, address, password,c_password,balance) values (?, ?, ? ,?, ?, ?,?)", [this.state.email, this.state.name,  this.state.number,this.state.address, this.state.password, this.state.c_password, balance]);
+          tx.executeSql("select * from user", [], async (_, { rows }) => {
               const jsonValue = JSON.stringify(rows.item(rows.length - 1));
-              await AsyncStorage.setItem('@storage_Key', jsonValue);
-              console.log("Database..............?",jsonValue);
+              await AsyncStorage.setItem('@storage_Key', jsonValue ,()=> {
+                setTimeout(()=>this.props.navigation.navigate('Home') ,500)
+                
+              });
             }
           );
         },
         null
       );
-      this.props.navigation.navigate('Home');
+
     } else {
       Alert.alert("Error", "Please Enter all fields")
     }
@@ -99,15 +102,6 @@ export default class SignUp extends Component {
               keyboardType="email-address"
               underlineColorAndroid='transparent'
               onChangeText={(name) => this.setState({name})}/>
-        </View>
-
-
-        <View style={styles.inputContainer}>
-          <TextInput style={styles.inputs}
-              placeholder="City"
-              keyboardType="email-address"
-              underlineColorAndroid='transparent'
-              onChangeText={(city) => this.setState({city})}/>
         </View>
         <View style={styles.inputContainer}>
           <TextInput style={styles.inputs}

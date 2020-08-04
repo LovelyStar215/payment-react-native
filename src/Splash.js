@@ -23,7 +23,6 @@ export const Splash = ({navigation}) => {
       console.log("error...",e);
     }
   }
-
   return (
     <View style={styles.container}>
     <ImageBackground 

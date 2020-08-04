@@ -37,7 +37,9 @@ export default function App() {
   clearAll = async (navigation) => {
     try {
       await AsyncStorage.clear();
-      navigation.navigate('SignIn')
+      await AsyncStorage.removeItem('storage_Key' ,()=>{
+        navigation.navigate('SignIn')
+      });
     } catch(e) {
     }
   }

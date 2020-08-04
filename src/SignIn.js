@@ -34,7 +34,7 @@ export default class SignIn extends Component {
   onSignInClick = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        'select * from data where email = ?',
+        'select * from user where email = ?',
         [this.state.email],
         async (tx, { rows: { _array } }) => {
           if (this.state.password === _array[0]?.password  ) {

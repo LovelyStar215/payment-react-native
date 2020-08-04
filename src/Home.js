@@ -9,19 +9,36 @@ import {
   Image,
   Alert
 } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class Home extends Component {
 
   constructor(props) {
     super(props);
-    state = {
-      email   : '',
-      name: '',
-      city:'',
-      number:'',
-      address:'',
+    this.state = {
+      account : 0,
+      balance: 0,
     }
+  }
+
+
+  getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@storage_Key');
+      let data = JSON.parse(jsonValue) ;
+      this.setState({account: data.id , balance : data.balance});
+
+    } catch(e) {
+      // error reading value
+    }
+  }
+   componentDidMount() {
+   this.getData()
+  }
+  componentDidUpdate() {
+    this.getData()
   }
 
   onClickListener = (viewId) => {
@@ -33,8 +50,10 @@ export default class Home extends Component {
   }
 
   render() {
+    const { isFocused } = this.props;
     return (
       <View style={styles.container}>
+        {isFocused && this.getData()}
         <View style={{height:'20%',width:'100%',  justifyContent: 'space-between', borderColor:'gray',
               borderWidth:2,
               marginTop: 5,
@@ -46,8 +65,6 @@ export default class Home extends Component {
         <Image style={styles.inputIcon} source={require('../assets/logo.jpg')}/>
         </View>
         </View>
-
-
         <View style={{
                 height:'40%',
                 width:'100%',
@@ -58,20 +75,20 @@ export default class Home extends Component {
             <Text style={{ fontSize: 30, fontWeight:'bold'}}>Account Summary</Text>
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight:'bold'}}>Account  :</Text>
-              <Text style={{ fontSize: 16, fontWeight:'bold'}}>2000$</Text>
+        <Text style={{ fontSize: 16, fontWeight:'bold'}}>{this.props?.navigation?.state?.params?.balance || this.state.account }</Text>
 
             </View>
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight:'bold'}}>Balance  :</Text>
-              <Text style={{ fontSize: 16, fontWeight:'bold'}}>2000$</Text>
+        <Text style={{ fontSize: 16, fontWeight:'bold'}}>{this.state.balance}$</Text>
             </View>
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight:'bold'}}>Loans  :</Text>
-              <Text style={{ fontSize: 16, fontWeight:'bold'}}>2000$</Text>
+              <Text style={{ fontSize: 16, fontWeight:'bold'}}>0000$</Text>
             </View>
             <View style={styles.inputView}>
               <Text style={{ fontSize: 16, fontWeight:'bold'}}>Investment:</Text>
-              <Text style={{ fontSize: 16, fontWeight:'bold'}}>2000$</Text>
+              <Text style={{ fontSize: 16, fontWeight:'bold'}}>000$</Text>
             </View>
           </View> 
           <View style={{height:'20%',width:'100%', 

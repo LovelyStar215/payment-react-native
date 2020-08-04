@@ -1,12 +1,30 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableHighlight, Alert } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export const Withdraw = ({navigation}) => {
 
-  const [state, setState] = useState('')
+  const [state, setValue] = useState(0)
 
-  const onSubmit= ()=>{
+  withDrawAmount = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@storage_Key');
+      let data =JSON.parse(jsonValue) ;
 
+      if(data?.balance > state) {
+        let val = data?.balance - state
+        data.balance = val;
+        await AsyncStorage.setItem('@storage_Key', JSON.stringify(data));
+        Alert.alert("Sucess");
+        this.props.navigation.navigate('Home',{balance: val});
+
+      } else {
+        Alert.alert("Error","You don't have suffeciant balance");
+      }
+      
+    } catch(e) {
+      // error reading value
+    }
   }
 
   return (
@@ -15,11 +33,11 @@ export const Withdraw = ({navigation}) => {
       <View style={styles.inputView}>
         <Text style={{ fontSize: 16, fontWeight:'bold'}}>Please add amount</Text>
         <TextInput style={styles.inputs}
-            value={state}
+            // value={state}
             placeholder="999$"
             underlineColorAndroid='transparent'
-            onChangeText={(loans) => setState({loans})}/>
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={onSubmit}>
+            onChangeText={(loans) => setValue(loans)}/>
+        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={withDrawAmount}>
           <Text style={styles.loginText}>Submit</Text>
         </TouchableHighlight>
       </View>
