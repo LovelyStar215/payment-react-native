@@ -14,7 +14,6 @@ export const Withdraw = ({navigation}) => {
       if(state < 5000) {
         let val = Number(data[0].balance) - Number(state)
         data[0].balance = val;
-        console.log("withDrawAmount.........",data);
         await AsyncStorage.setItem('@storage_Key', JSON.stringify(data));
         Alert.alert("Sucess");
         this.props.navigation.navigate('Home',{balance: val});

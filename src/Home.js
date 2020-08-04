@@ -25,6 +25,7 @@ export default class Home extends Component {
 
 
   getData = async () => {
+  
     try {
       const jsonValue = await AsyncStorage.getItem('@storage_Key');
       let data = [...JSON.parse(jsonValue)];
@@ -34,12 +35,17 @@ export default class Home extends Component {
     }
   }
    componentDidMount() {
-   this.getData()
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.getData();
+    });
+   this.getData();
   }
   // componentDidUpdate() {
   //   this.getData()
   // }
-
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
   onClickListener = (viewId) => {
     Alert.alert("Alert", "Button pressed "+viewId);
   }
