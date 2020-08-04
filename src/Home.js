@@ -27,9 +27,8 @@ export default class Home extends Component {
   getData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('@storage_Key');
-      let data = JSON.parse(jsonValue) ;
-      this.setState({account: data.id , balance : data.balance});
-
+      let data = [...JSON.parse(jsonValue)];
+      this.setState({account: data[0].id , balance : data[0].balance});
     } catch(e) {
       // error reading value
     }
@@ -37,9 +36,9 @@ export default class Home extends Component {
    componentDidMount() {
    this.getData()
   }
-  componentDidUpdate() {
-    this.getData()
-  }
+  // componentDidUpdate() {
+  //   this.getData()
+  // }
 
   onClickListener = (viewId) => {
     Alert.alert("Alert", "Button pressed "+viewId);
@@ -124,7 +123,7 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignContent:'center',
     alignItems:'center',
-    marginVertical: 20,
+    marginVertical: 10,
     marginHorizontal: 20,
   },
   inputContainer: {
@@ -139,8 +138,8 @@ const styles = StyleSheet.create({
       alignItems:'center'
   },
   inputIcon:{
-    width:80,
-    height:80,
+    width:60,
+    height:60,
     marginLeft:15,
     marginBottom:35,
     justifyContent: 'center',

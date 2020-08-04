@@ -9,11 +9,10 @@ export const Deposit = () => {
   depositAmount = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('@storage_Key');
-      let data =JSON.parse(jsonValue);
-
+      let data = [...JSON.parse(jsonValue)];
       if(state < 5000) {
-        let val =  Number(data.balance) + Number(state);
-        data.balance = val;
+        let val =  Number(data[0].balance) + Number(state);
+        data[0].balance = val;
         await AsyncStorage.setItem('@storage_Key', JSON.stringify(data));
         Alert.alert("Sucess");
         this.props.navigation.navigate('Home',{balance: val})
@@ -48,7 +47,8 @@ export const Deposit = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    marginTop:80,
     alignItems: 'center'
   },
   text: {

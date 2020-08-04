@@ -5,7 +5,7 @@ import {
   View,
   TextInput,
   Button,
-  TouchableHighlight,
+  TouchableOpacity,
   Image,
   Alert
 } from 'react-native';
@@ -52,7 +52,11 @@ export default class SignIn extends Component {
   render() {
     return (
       <View style={styles.container}>
-          <Image style={styles.inputIcon} source={require('../assets/logo.jpg')}/>
+        <View style={{flex:1 }}>
+        <Image style={styles.inputIcon} source={require('../assets/logo.jpg')}/>
+        </View>
+        <View style={{flex:1,  justifyContent: 'center',alignItems: 'center', }}>
+          <Text style={{fontSize: 30, paddingBottom:20, color:'#03dffc'}}>iBanking</Text>
         <View style={styles.inputContainer}>
           <TextInput style={styles.inputs}
               placeholder="Email"
@@ -69,15 +73,16 @@ export default class SignIn extends Component {
               underlineColorAndroid='transparent'
               onChangeText={(password) => this.setState({password})}/>
         </View>
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.onSignInClick}>
+        <TouchableOpacity style={[styles.buttonContainer, styles.loginButton]} onPress={this.onSignInClick}>
           <Text style={styles.loginText}>Login</Text>
-        </TouchableHighlight>
-        <TouchableHighlight style={styles.buttonContainer} onPress={() => this.onClickListener('restore_password')}>
-            <Text>Forgot your password?</Text>
-        </TouchableHighlight>
-        <TouchableHighlight style={styles.buttonContainer} onPress={this.onSignUpClick}>
-            <Text>Create your account</Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.onClickListener('restore_password')}>
+            <Text style={{textDecorationLine:'underline', color:'#03dffc'}}>Forgot password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonContainer} onPress={this.onSignUpClick}>
+            <Text style={{textDecorationLine:'underline'}}>Create your account</Text>
+        </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -112,19 +117,18 @@ const styles = StyleSheet.create({
     width:250,
   },
   inputIcon:{
-    width:100,
-    height:100,
+    flex:1,
     marginLeft:15,
     marginBottom:35,
     justifyContent: 'center',
-    borderRadius:50,
+    // borderRadius:50,
   },
   buttonContainer: {
     height:45,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom:20,
+    // marginBottom:5,
     width:150,
     borderRadius:30,
   },

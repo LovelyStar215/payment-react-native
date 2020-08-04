@@ -9,19 +9,18 @@ export const Withdraw = ({navigation}) => {
   withDrawAmount = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('@storage_Key');
-      let data =JSON.parse(jsonValue) ;
-
-      if(data?.balance > state) {
-        let val = data?.balance - state
-        data.balance = val;
+      let data = [...JSON.parse(jsonValue)];
+ 
+      if(state < 5000) {
+        let val = Number(data[0].balance) - Number(state)
+        data[0].balance = val;
+        console.log("withDrawAmount.........",data);
         await AsyncStorage.setItem('@storage_Key', JSON.stringify(data));
         Alert.alert("Sucess");
         this.props.navigation.navigate('Home',{balance: val});
-
       } else {
         Alert.alert("Error","You don't have suffeciant balance");
       }
-      
     } catch(e) {
       // error reading value
     }
@@ -49,7 +48,8 @@ export const Withdraw = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    marginTop:80,
     alignItems: 'center'
   },
   text: {
